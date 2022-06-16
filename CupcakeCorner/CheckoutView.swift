@@ -26,7 +26,7 @@ struct CheckoutView: View {
                 }
                 .frame(height: 233)
                 
-                Text("Your total is \(order.cost, format: .currency(code: "USD"))")
+                Text("Your total is \(order.orderDetails.cost, format: .currency(code: "USD"))")
                     .font(.title)
                 
                 Button("Place Order") {
@@ -66,7 +66,7 @@ struct CheckoutView: View {
             let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
             
             let decodedOrder = try JSONDecoder().decode(Order.self, from: data)
-            confirmationMessage = "Your order for \(decodedOrder.quantity)x \(Order.types[decodedOrder.type].lowercased()) cup cakes is on its way!"
+            confirmationMessage = "Your order for \(decodedOrder.orderDetails.quantity)x \(OrderDetails.types[decodedOrder.orderDetails.type].lowercased()) cup cakes is on its way!"
             showingConfirmation = true
         } catch {
             confirmationMessage = "Something went wrong. Is your internet connection stable?"
