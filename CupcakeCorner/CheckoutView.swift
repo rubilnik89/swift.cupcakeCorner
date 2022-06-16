@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CheckoutView: View {
-    @ObservedObject var order: Order
+    @State var orderDetails: OrderDetails
     
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
@@ -26,7 +26,7 @@ struct CheckoutView: View {
                 }
                 .frame(height: 233)
                 
-                Text("Your total is \(order.orderDetails.cost, format: .currency(code: "USD"))")
+                Text("Your total is \(orderDetails.cost, format: .currency(code: "USD"))")
                     .font(.title)
                 
                 Button("Place Order") {
@@ -52,7 +52,7 @@ struct CheckoutView: View {
     }
     
     func placeOrder() async {
-        guard let encoded = try? JSONEncoder().encode(order) else {
+        guard let encoded = try? JSONEncoder().encode(orderDetails) else {
             print("Failed to encode order")
             return
         }
@@ -65,8 +65,8 @@ struct CheckoutView: View {
         do {
             let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
             
-            let decodedOrder = try JSONDecoder().decode(Order.self, from: data)
-            confirmationMessage = "Your order for \(decodedOrder.orderDetails.quantity)x \(OrderDetails.types[decodedOrder.orderDetails.type].lowercased()) cup cakes is on its way!"
+            let decodedOrder = try JSONDecoder().decode(OrderDetails.self, from: data)
+            confirmationMessage = "Your order for \(decodedOrder.quantity)x \(OrderDetails.types[decodedOrder.type].lowercased()) cup cakes is on its way!"
             showingConfirmation = true
         } catch {
             confirmationMessage = "Something went wrong. Is your internet connection stable?"
@@ -78,6 +78,6 @@ struct CheckoutView: View {
 
 struct CheckoutView_Previews: PreviewProvider {
     static var previews: some View {
-        CheckoutView(order: Order())
+        CheckoutView(orderDetails: OrderDetails())
     }
 }

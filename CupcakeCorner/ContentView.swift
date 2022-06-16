@@ -34,7 +34,7 @@ struct ContentView: View {
                 
                 Section {
                     NavigationLink {
-                        AddressView(order: order)
+                        AddressView(orderDetails: order.orderDetails)
                     } label: {
                         Text("Delivery details")
                     }
